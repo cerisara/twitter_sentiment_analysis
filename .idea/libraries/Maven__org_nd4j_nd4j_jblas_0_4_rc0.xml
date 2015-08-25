@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.nd4j:nd4j-jblas:0.4-rc0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/nd4j/nd4j-jblas/0.4-rc0/nd4j-jblas-0.4-rc0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/nd4j/nd4j-jblas/0.4-rc0/nd4j-jblas-0.4-rc0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/nd4j/nd4j-jblas/0.4-rc0/nd4j-jblas-0.4-rc0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
