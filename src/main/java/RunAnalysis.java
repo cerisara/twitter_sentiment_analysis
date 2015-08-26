@@ -3,6 +3,7 @@
  */
 
 import javafx.util.Pair;
+import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.models.embeddings.WeightLookupTable;
 import org.deeplearning4j.models.embeddings.inmemory.InMemoryLookupTable;
 import org.deeplearning4j.models.embeddings.loader.WordVectorSerializer;
@@ -61,9 +62,8 @@ public class RunAnalysis {
 
             log.info("Building model....");
             Word2Vec vec = new Word2Vec.Builder()
-                    .minWordFrequency(5).iterations(1)
+                    .minWordFrequency(5).iterations(3)
                     .layerSize(vectorLength).lookupTable(table)
-                    .stopWords(new ArrayList<>())
                     .vocabCache(cache).seed(42)
                     .windowSize(5).iterate(it).build();
 
@@ -122,7 +122,7 @@ public class RunAnalysis {
                 .iterations(1)
                 .learningRate(1e-3)
                 .l1(0.3).regularization(true).l2(1e-3)
-                .list(1)
+                .list(2)
                 .layer(0, new OutputLayer.Builder().activation("softmax").nIn(vectorLength).nOut(2).build())
                 .build();
 
@@ -133,17 +133,26 @@ public class RunAnalysis {
             INDArray labelRow = targetList.get(i);
             model.fit(featureRow, labelRow);
         }
+
+        Evaluation eval = new Evaluation();
+        for (int i=0; i < featureList.size(); i++) {
+            INDArray featureRow = featureList.get(i);
+            INDArray labelRow = targetList.get(i);
+            INDArray output = model.output(featureRow);
+            eval.eval(labelRow, output);
+        }
+        log.info(eval.stats());
+
         return model;
     }
 
     public static void main(String args[]) throws Exception {
         String s3BucketName = "sentiment140twitter";
-        // Small dataset for dev
-//        String trainDataFileName = "sentiment140_train_sample10.csv";
-        // Bigger dataset which is 1/50th of the sentiment140 corpus
+//        String trainDataFileName = "sentiment140_train.csv";
+        // Smaller dataset to train to save time. But less accurate
         String trainDataFileName = "sentiment140_train_sample50th.csv";
         String testDataFileName = "sentiment140_test.csv";
-        int vectorLength = 100;
+        int vectorLength = 200;
 
         RunAnalysis runAnalysis = new RunAnalysis(s3BucketName, trainDataFileName, testDataFileName, vectorLength);
         runAnalysis.runWord2Vec();
