@@ -1,3 +1,6 @@
+package utils;
+
+import javafx.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.deeplearning4j.aws.s3.reader.S3Downloader;
@@ -19,6 +22,7 @@ public class S3SentenceIterator extends BaseSentenceIterator {
     private String fileToRead;
     private String rawBucketName;
     private LineIterator iter;
+    private ParseCsvPreprocessor parseCsvPreprocessor;
 
     public S3SentenceIterator(String bucket, String fileToRead) {
         this.rawBucketName = bucket;
@@ -35,6 +39,14 @@ public class S3SentenceIterator extends BaseSentenceIterator {
         readFile();
     }
 
+    public S3SentenceIterator(ParseCsvPreprocessor parseCsvPreprocessor, String bucket, String fileToRead) {
+        this.rawBucketName = bucket;
+        this.fileToRead = fileToRead;
+        this.parseCsvPreprocessor = parseCsvPreprocessor;
+        readFile();
+    }
+
+
     public void readFile() {
         try {
             InputStream in = new S3Downloader().objectForKey(rawBucketName, fileToRead);
@@ -44,6 +56,15 @@ public class S3SentenceIterator extends BaseSentenceIterator {
             log.info("File not read properly");
         }
 
+    }
+
+    public Pair<double[], String[]> nextSentenceParsedCsv() {
+        String line = this.iter.nextLine();
+        if (this.parseCsvPreprocessor != null) {
+            return this.parseCsvPreprocessor.preProcess(line);
+        } else {
+            throw new IllegalStateException("utils.ParseCsvPreprocessor not defined.");
+        }
     }
 
     public String nextSentence() {

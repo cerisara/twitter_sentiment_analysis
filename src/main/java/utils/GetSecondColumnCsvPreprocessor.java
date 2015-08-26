@@ -1,11 +1,13 @@
+package utils;
+
 import org.deeplearning4j.text.sentenceiterator.SentencePreProcessor;
 
 /**
  * @author jeffreytang
  */
-public class CsvSentencePreprocessor implements SentencePreProcessor {
+public class GetSecondColumnCsvPreprocessor implements SentencePreProcessor {
 
     public String preProcess(String s) {
-        return s.split(",")[1];
+        return s.split(",")[1].toLowerCase();
     }
 }
