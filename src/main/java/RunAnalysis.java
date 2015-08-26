@@ -148,6 +148,7 @@ public class RunAnalysis {
 
     public static void main(String args[]) throws Exception {
         String s3BucketName = "sentiment140twitter";
+        // Full set of data. Take ~20 mins to train
 //        String trainDataFileName = "sentiment140_train.csv";
         // Smaller dataset to train to save time. But less accurate
         String trainDataFileName = "sentiment140_train_sample50th.csv";
